@@ -13,7 +13,7 @@ const background = new Sprite({
         x: 0,
         y: 0
     },
-    imageSrc: './images/background.png'
+    imageSrc: './images/background/background.png'
 })
 
 const player = new Fighter({
@@ -29,7 +29,31 @@ const player = new Fighter({
         x: 0,
         y: 0
     },
-    color: 'green' 
+    imageSrc: './images/player/Idle.png',
+    framesMax: 10,
+    scale: 2.5,
+    offset: {
+        x: 46,
+        y: 53
+    },
+    sprites: {
+        idle: {
+            imageSrc: './images/player/Idle.png',
+            framesMax: 10,
+        },
+        run: {
+            imageSrc: './images/player/Run.png',
+            framesMax: 8,
+        },
+        jump: {
+            imageSrc: './images/player/Jump.png',
+            framesMax: 10,
+        },
+        attack: {
+            imageSrc: './images/player/Attack1.png',
+            framesMax: 10,
+        },
+    }
 });
 
 const enemy = new Fighter({
@@ -45,7 +69,31 @@ const enemy = new Fighter({
         x: -50,
         y: 0
     },
-    color: 'red'   
+    imageSrc: './images/enemy/Idle.png',
+    framesMax: 8,
+    scale: 2.5,
+    offset: {
+        x: 76,
+        y: 112
+    },
+    sprites: {
+        idle: {
+            imageSrc: './images/enemy/Idle.png',
+            framesMax: 8,
+        },
+        run: {
+            imageSrc: './images/enemy/Run.png',
+            framesMax: 8,
+        },
+        jump: {
+            imageSrc: './images/enemy/Jump.png',
+            framesMax: 8,
+        },
+        attack: {
+            imageSrc: './images/enemy/Attack1.png',
+            framesMax: 8,
+        },
+    }
 });
 
 const keys = {
@@ -109,19 +157,25 @@ function animate() {
     enemy.update()
 
     // Player
-    player.velocity.x = 0    
+    player.velocity.x = 0
+    player.changeSprite('idle')
     if(keys.a.pressed && player.lastKey === 'a') {
         player.velocity.x = -5
+        player.changeSprite('run')
     }else if(keys.d.pressed && player.lastKey === 'd') {
         player.velocity.x = 5
+        player.changeSprite('run')
     }
 
     // Enemy
-    enemy.velocity.x = 0    
+    enemy.velocity.x = 0
+    enemy.changeSprite('idle')    
     if(keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
         enemy.velocity.x = 5
+        enemy.changeSprite('run')
     }else if(keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
         enemy.velocity.x = -5
+        enemy.changeSprite('run')
     }
 
     // Hit Detection
