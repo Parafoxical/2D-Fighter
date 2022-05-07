@@ -13,19 +13,6 @@ class Sprite{
         this.offset = offset
     }
 
-    animate(){
-        this.framesElapsed++
-
-        if (this.framesElapsed % this.framesHold === 0) {
-            if (this.framesCurrent < this.framesMax - 1) {
-                this.framesCurrent++
-            }
-            else {
-                this.framesCurrent = 0
-            }
-        }
-    }
-
     draw(){
         c.drawImage(
             this.image, 
@@ -40,14 +27,26 @@ class Sprite{
         )
     }
 
+    animateFrames() {
+        this.framesElapsed++
+    
+        if (this.framesElapsed % this.framesHold === 0) {
+          if (this.framesCurrent < this.framesMax - 1) {
+            this.framesCurrent++
+          } else {
+            this.framesCurrent = 0
+          }
+        }
+      }
+
     update(){
         this.draw()
-        this.animate()
+        this.animateFrames()
      }
 }
 
 class Fighter extends Sprite{
-    constructor({position, velocity, color, imageSrc, scale = 1, framesMax = 1, offset = {x:0, y:0}, sprites}){
+    constructor({position, velocity, imageSrc, scale = 1, framesMax = 1, offset = {x:0, y:0}, sprites}){
         super({
             position,
             imageSrc,
@@ -68,12 +67,11 @@ class Fighter extends Sprite{
             width: 100,
             height: 50
         }
-        this.color = color
         this.isAttacking
         this.health = 100
         this.framesCurrent = 0
         this.framesElapsed = 0
-        this.framesHold = 7
+        this.framesHold = 5
         this.sprites = sprites
 
         for (const sprite in sprites) {
@@ -83,22 +81,56 @@ class Fighter extends Sprite{
     }
 
     changeSprite(sprite){
+        if ((this.image === this.sprites.attack.image) && (this.framesCurrent < this.sprites.attack.framesMax - 1)) {
+            return
+        }
         switch(sprite){
             case 'idle':
-                if (this.image !== this.sprites.idle.image)
+                if (this.image !== this.sprites.idle.image) {
+                    this.framesHold = this.sprites.idle.framesHold
                     this.image = this.sprites.idle.image
                     this.framesMax = this.sprites.idle.framesMax
+                    this.framesCurrent = 0
+                }                
                 break
             case 'run':
-                this.image = this.sprites.run.image
-                this.framesMax = this.sprites.run.framesMax
+                if (this.image !== this.sprites.run.image) {
+                    this.framesHold = this.sprites.run.framesHold
+                    this.image = this.sprites.run.image
+                    this.framesMax = this.sprites.run.framesMax
+                    this.framesCurrent = 0               
+                }
+                break
+            case 'jump':
+                if (this.image !== this.sprites.jump.image) {
+                    this.framesHold = this.sprites.jump.framesHold
+                    this.image = this.sprites.jump.image
+                    this.framesMax = this.sprites.jump.framesMax
+                    this.framesCurrent = 0                  
+                }
+                break
+            case 'fall':
+                if (this.image !== this.sprites.fall.image) {
+                    this.framesHold = this.sprites.fall.framesHold
+                    this.image = this.sprites.fall.image
+                    this.framesMax = this.sprites.fall.framesMax
+                    this.framesCurrent = 0                    
+                }
+                 break
+            case 'attack':
+                if (this.image !== this.sprites.attack.image) {
+                    this.framesHold = this.sprites.attack.framesHold
+                    this.image = this.sprites.attack.image
+                    this.framesMax = this.sprites.attack.framesMax
+                    this.framesCurrent = 0                   
+                }
                 break
         }
     }
 
     update(){
         this.draw()
-        this.animate()
+        this.animateFrames()
         this.attackBox.position.x = this.position.x + this.attackBox.offset.x
         this.attackBox.position.y = this.position.y
         this.position.x += this.velocity.x
@@ -106,12 +138,14 @@ class Fighter extends Sprite{
 
         if (this.position.y + this.height + this.velocity.y >= 452){
             this.velocity.y = 0
+            this.position.y = 302
         }else{
             this.velocity.y += gravity
         }
     }    
     
     attack(){
+        this.changeSprite('attack')
         this.isAttacking = true
         setTimeout(() => {
             this.isAttacking = false

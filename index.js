@@ -40,18 +40,27 @@ const player = new Fighter({
         idle: {
             imageSrc: './images/player/Idle.png',
             framesMax: 10,
+            framesHold: 5,
         },
         run: {
             imageSrc: './images/player/Run.png',
             framesMax: 8,
+            framesHold: 6,
         },
         jump: {
             imageSrc: './images/player/Jump.png',
-            framesMax: 10,
+            framesMax: 3,
+            framesHold: 5,
+        },
+        fall: {
+            imageSrc: './images/player/Fall.png',
+            framesMax: 3,
+            framesHold: 5,
         },
         attack: {
-            imageSrc: './images/player/Attack1.png',
-            framesMax: 10,
+            imageSrc: './images/player/Attack2.png',
+            framesMax: 6,
+            framesHold: 5,
         },
     }
 });
@@ -80,18 +89,27 @@ const enemy = new Fighter({
         idle: {
             imageSrc: './images/enemy/Idle.png',
             framesMax: 8,
+            framesHold: 6,
         },
         run: {
             imageSrc: './images/enemy/Run.png',
             framesMax: 8,
+            framesHold: 6,
         },
         jump: {
             imageSrc: './images/enemy/Jump.png',
-            framesMax: 8,
+            framesMax: 2,
+            framesHold: 5,
+        },
+        fall: {
+            imageSrc: './images/enemy/Fall.png',
+            framesMax: 2,
+            framesHold: 5,
         },
         attack: {
             imageSrc: './images/enemy/Attack1.png',
-            framesMax: 8,
+            framesMax: 4,
+            framesHold: 8,
         },
     }
 });
@@ -158,24 +176,42 @@ function animate() {
 
     // Player
     player.velocity.x = 0
-    player.changeSprite('idle')
+
     if(keys.a.pressed && player.lastKey === 'a') {
         player.velocity.x = -5
         player.changeSprite('run')
     }else if(keys.d.pressed && player.lastKey === 'd') {
         player.velocity.x = 5
         player.changeSprite('run')
+    }else {
+        player.changeSprite('idle')
+    }
+    
+    // Player Jumping
+    if (player.velocity.y < 0) {
+        player.changeSprite('jump')
+    }else if (player.velocity.y > 0) {
+        player.changeSprite('fall')
     }
 
     // Enemy
     enemy.velocity.x = 0
-    enemy.changeSprite('idle')    
+
     if(keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
         enemy.velocity.x = 5
         enemy.changeSprite('run')
     }else if(keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
         enemy.velocity.x = -5
         enemy.changeSprite('run')
+    } else {
+        enemy.changeSprite('idle')
+    }
+
+    // enemy Jumping
+    if (enemy.velocity.y < 0) {
+        enemy.changeSprite('jump')
+    }else if (enemy.velocity.y > 0) {
+        enemy.changeSprite('fall')
     }
 
     // Hit Detection
