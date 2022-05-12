@@ -29,38 +29,74 @@ const player = new Fighter({
         x: 0,
         y: 0
     },
-    imageSrc: './images/player/Idle.png',
+    imageSrc: './images/player/Idleright.png',
     framesMax: 10,
     scale: 2.5,
     offset: {
         x: 46,
         y: 53
     },
+    direction: 'right',
     sprites: {
-        idle: {
-            imageSrc: './images/player/Idle.png',
+        idleleft: {
+            imageSrc: './images/player/Idleleft.png',
             framesMax: 10,
             framesHold: 5,
         },
-        run: {
-            imageSrc: './images/player/Run.png',
+        idleright: {
+            imageSrc: './images/player/Idleright.png',
+            framesMax: 10,
+            framesHold: 5,
+        },
+        runleft: {
+            imageSrc: './images/player/Runleft.png',
             framesMax: 8,
             framesHold: 6,
         },
-        jump: {
-            imageSrc: './images/player/Jump.png',
+        runright: {
+            imageSrc: './images/player/Runright.png',
+            framesMax: 8,
+            framesHold: 6,
+        },
+        jumpleft: {
+            imageSrc: './images/player/Jumpleft.png',
             framesMax: 3,
             framesHold: 5,
         },
-        fall: {
-            imageSrc: './images/player/Fall.png',
+        jumpright: {
+            imageSrc: './images/player/Jumpright.png',
             framesMax: 3,
             framesHold: 5,
         },
-        attack: {
-            imageSrc: './images/player/Attack2.png',
-            framesMax: 6,
+        fallleft: {
+            imageSrc: './images/player/Fallleft.png',
+            framesMax: 3,
             framesHold: 5,
+        },
+        fallright: {
+            imageSrc: './images/player/Fallright.png',
+            framesMax: 3,
+            framesHold: 5,
+        },
+        attackleft: {
+            imageSrc: './images/player/Attackleft.png',
+            framesMax: 7,
+            framesHold: 5,
+        },
+        attackright: {
+            imageSrc: './images/player/Attackright.png',
+            framesMax: 7,
+            framesHold: 5,
+        },
+        hitleft: {
+            imageSrc: './images/player/Take Hitleft.png',
+            framesMax: 4,
+            framesHold: 8,
+        },
+        hitright: {
+            imageSrc: './images/player/Take Hitright.png',
+            framesMax: 4,
+            framesHold: 8,
         },
     }
 });
@@ -78,39 +114,76 @@ const enemy = new Fighter({
         x: -50,
         y: 0
     },
-    imageSrc: './images/enemy/Idle.png',
+    imageSrc: './images/enemy/Idleright.png',
     framesMax: 8,
     scale: 2.5,
     offset: {
         x: 76,
         y: 112
     },
+    direction: 'left',
     sprites: {
-        idle: {
-            imageSrc: './images/enemy/Idle.png',
+        idleleft: {
+            imageSrc: './images/enemy/Idleleft.png',
             framesMax: 8,
             framesHold: 6,
         },
-        run: {
-            imageSrc: './images/enemy/Run.png',
+        idleright: {
+            imageSrc: './images/enemy/Idleright.png',
             framesMax: 8,
             framesHold: 6,
         },
-        jump: {
-            imageSrc: './images/enemy/Jump.png',
+        runleft: {
+            imageSrc: './images/enemy/Runleft.png',
+            framesMax: 8,
+            framesHold: 6,
+        },
+        runright: {
+            imageSrc: './images/enemy/Runright.png',
+            framesMax: 8,
+            framesHold: 6,
+        },
+        jumpleft: {
+            imageSrc: './images/enemy/Jumpleft.png',
             framesMax: 2,
             framesHold: 5,
         },
-        fall: {
-            imageSrc: './images/enemy/Fall.png',
+        jumpright: {
+            imageSrc: './images/enemy/Jumpright.png',
             framesMax: 2,
             framesHold: 5,
         },
-        attack: {
-            imageSrc: './images/enemy/Attack1.png',
+        fallleft: {
+            imageSrc: './images/enemy/Fallleft.png',
+            framesMax: 2,
+            framesHold: 5,
+        },
+        fallright: {
+            imageSrc: './images/enemy/Fallright.png',
+            framesMax: 2,
+            framesHold: 5,
+        },
+        attackleft: {
+            imageSrc: './images/enemy/Attackleft.png',
             framesMax: 4,
             framesHold: 8,
         },
+        attackright: {
+            imageSrc: './images/enemy/Attackright.png',
+            framesMax: 4,
+            framesHold: 8,
+        },
+        hitleft: {
+            imageSrc: './images/enemy/Take Hitleft.png',
+            framesMax: 4,
+            framesHold: 8,
+        },
+        hitright: {
+            imageSrc: './images/enemy/Take Hitright.png',
+            framesMax: 4,
+            framesHold: 8,
+        },
+
     }
 });
 
@@ -160,6 +233,7 @@ function decreaseTimer(){
     }
     if (timer === 0) {
         determineWinner({player,enemy,timerId})
+        
     }
 
 }
@@ -177,42 +251,60 @@ function animate() {
     // Player
     player.velocity.x = 0
 
-    if(keys.a.pressed && player.lastKey === 'a') {
-        player.velocity.x = -5
-        player.changeSprite('run')
-    }else if(keys.d.pressed && player.lastKey === 'd') {
-        player.velocity.x = 5
-        player.changeSprite('run')
-    }else {
-        player.changeSprite('idle')
+    if (!player.isAttacking) {
+        if(keys.a.pressed && player.lastKey === 'a') {
+            player.velocity.x = -5
+            if (player.direction != 'left'){
+                player.direction = 'left'
+            }
+            player.changeSprite('run')
+        }else if(keys.d.pressed && player.lastKey === 'd') {
+            player.velocity.x = 5
+            if (player.direction != 'right'){
+                player.direction = 'right'
+            }
+            player.changeSprite('run')
+        }else {
+            player.changeSprite('idle')
+        }
+        
+        // Player Jumping
+        if (player.velocity.y < 0) {
+            player.changeSprite('jump')
+        }else if (player.velocity.y > 0) {
+            player.changeSprite('fall')
+        }
+    
     }
     
-    // Player Jumping
-    if (player.velocity.y < 0) {
-        player.changeSprite('jump')
-    }else if (player.velocity.y > 0) {
-        player.changeSprite('fall')
-    }
-
     // Enemy
     enemy.velocity.x = 0
 
-    if(keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
-        enemy.velocity.x = 5
-        enemy.changeSprite('run')
-    }else if(keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
-        enemy.velocity.x = -5
-        enemy.changeSprite('run')
-    } else {
-        enemy.changeSprite('idle')
+    if (!enemy.isAttacking) {
+        if(keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
+            enemy.velocity.x = 5
+                if (enemy.direction != 'right'){
+                enemy.direction = 'right'
+            }
+            enemy.changeSprite('run')
+        }else if(keys.ArrowLeft.pressed && enemy.lastKey === 'ArrowLeft') {
+            enemy.velocity.x = -5
+            if (enemy.direction != 'left'){
+                enemy.direction = 'left'
+            }
+            enemy.changeSprite('run')
+        } else {
+            enemy.changeSprite('idle')
+        }
+    
+        // enemy Jumping
+        if (enemy.velocity.y < 0) {
+            enemy.changeSprite('jump')
+        }else if (enemy.velocity.y > 0) {
+            enemy.changeSprite('fall')
+        }
     }
-
-    // enemy Jumping
-    if (enemy.velocity.y < 0) {
-        enemy.changeSprite('jump')
-    }else if (enemy.velocity.y > 0) {
-        enemy.changeSprite('fall')
-    }
+    
 
     // Hit Detection
     if (collision({
@@ -221,6 +313,7 @@ function animate() {
         }) && player.isAttacking){
         player.isAttacking = false
         enemy.health -= 10
+        enemy.changeSprite('hit')
         document.querySelector('#enemyHealth').style.width = enemy.health + "%"
         console.log('enemy hit')
     }
@@ -231,6 +324,7 @@ function animate() {
         }) && enemy.isAttacking){ 
         enemy.isAttacking = false
         player.health -= 10
+        player.changeSprite('hit')
         document.querySelector('#playerHealth').style.width = player.health + "%"
         console.log('player hit')
     }
