@@ -6,7 +6,14 @@ canvas.height = 576
 
 c.fillRect(0, 0, canvas.width, canvas.height)
 
+playerhtbx = c
+playerattkhtbx = c
+enemyhtbx = c
+enemyattkhtbx = c
+
 const gravity = 1;
+
+DEBUG = false
 
 const background = new Sprite({
     position: {
@@ -25,18 +32,22 @@ const player = new Fighter({
         x: 0,
         y: 0
     },
-    offset:{
-        x: 0,
-        y: 0
-    },
     imageSrc: './images/player/Idleright.png',
     framesMax: 10,
     scale: 2.5,
     offset: {
-        x: 46,
-        y: 53
+        x: 120,
+        y: 55
     },
     direction: 'right',
+    hitboxOffset: {
+        x: 80,
+        y: 50
+    },
+    hitboxSize: {
+        x: 80,
+        y: 150
+    },
     sprites: {
         idleleft: {
             imageSrc: './images/player/Idleleft.png',
@@ -110,18 +121,22 @@ const enemy = new Fighter({
         x: 0,
         y: 0
     },
-    offset:{
-        x: -50,
-        y: 0
-    },
     imageSrc: './images/enemy/Idleright.png',
     framesMax: 8,
     scale: 2.5,
     offset: {
-        x: 76,
+        x: 160,
         y: 112
     },
     direction: 'left',
+    hitboxOffset: {
+        x: 80,
+        y: 50
+    },
+    hitboxSize: {
+        x: 80,
+        y: 150
+    },
     sprites: {
         idleleft: {
             imageSrc: './images/enemy/Idleleft.png',
@@ -183,7 +198,6 @@ const enemy = new Fighter({
             framesMax: 4,
             framesHold: 8,
         },
-
     }
 });
 
@@ -247,6 +261,28 @@ function animate() {
     background.update()
     player.update()
     enemy.update()
+
+    if (DEBUG) {
+        playerhtbx.beginPath();
+        playerhtbx.strokeStyle = "green";
+        playerhtbx.rect(player.position.x, player.position.y, player.width, player.height);
+        playerhtbx.stroke();
+
+        playerattkhtbx.beginPath();
+        playerattkhtbx.strokeStyle = "blue";
+        playerattkhtbx.rect(player.attackBox.position.x, player.attackBox.position.y, player.attackBox.width, player.attackBox.height);
+        playerattkhtbx.stroke();
+
+        enemyhtbx.beginPath();
+        enemyhtbx.strokeStyle = "red";
+        enemyhtbx.rect(enemy.position.x, enemy.position.y, enemy.width, enemy.height);
+        enemyhtbx.stroke();
+
+        enemyattkhtbx.beginPath();
+        enemyattkhtbx.strokeStyle = "yellow";
+        enemyattkhtbx.rect(enemy.attackBox.position.x, enemy.attackBox.position.y, enemy.attackBox.width, enemy.attackBox.height);
+        enemyattkhtbx.stroke();
+    }
 
     // Player
     player.velocity.x = 0
@@ -402,6 +438,15 @@ window.addEventListener('keydown', (event) => {
         case 'Enter':
             enemy.attack()
             break
+
+        // Debug
+        case 'e':
+            DEBUG = true
+            break
+        case 'r':
+            DEBUG = false
+            break
+
     }
 })
 

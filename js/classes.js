@@ -46,7 +46,7 @@ class Sprite{
 }
 
 class Fighter extends Sprite{
-    constructor({position, velocity, imageSrc, scale = 1, framesMax = 1, offset = {x:0, y:0}, sprites, direction}){
+    constructor({position, velocity, imageSrc, scale = 1, framesMax = 1, offset = {x:0, y:0}, hitboxSize = {x:0, y:0}, sprites, direction, hitboxOffset = {x:0, y:0}}){
         super({
             position,
             imageSrc,
@@ -55,8 +55,8 @@ class Fighter extends Sprite{
             offset,
         })
         this.velocity = velocity
-        this.width = 70
-        this.height = 150
+        this.width = hitboxSize.x
+        this.height = hitboxSize.y
         this.lastKey
         this.movement = true
         this.canAttack = true
@@ -65,10 +65,10 @@ class Fighter extends Sprite{
                 x: this.position.x,
                 y: this.position.y
             },
-            offset,
             width: 100,
-            height: 50
+            height: 70
         }
+        this.hitboxOffset = hitboxOffset
         this.isAttacking
         this.health = 100
         this.framesCurrent = 0
@@ -210,8 +210,7 @@ class Fighter extends Sprite{
     update(){
         this.draw()
         this.animateFrames()
-        this.attackBox.position.x = this.position.x + this.attackBox.offset.x
-        this.attackBox.position.y = this.position.y
+        
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
 
@@ -221,7 +220,14 @@ class Fighter extends Sprite{
         }else{
             this.velocity.y += gravity
         }
-        
+        if (this.direction === 'left') {
+            this.attackBox.position.x = this.position.x - this.attackBox.width
+            this.attackBox.position.y = this.position.y + this.hitboxOffset.y
+        } 
+        else {
+            this.attackBox.position.x = this.position.x + this.hitboxOffset.x
+            this.attackBox.position.y = this.position.y + this.hitboxOffset.y
+        }
     }    
     
     attack(){
