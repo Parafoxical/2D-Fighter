@@ -90,12 +90,12 @@ const player = new Fighter({
         },
         hitleft: {
             imageSrc: './images/player/Take Hitleft.png',
-            framesMax: 4,
+            framesMax: 3,
             framesHold: 8,
         },
         hitright: {
             imageSrc: './images/player/Take Hitright.png',
-            framesMax: 4,
+            framesMax: 3,
             framesHold: 8,
         },
     }
@@ -251,7 +251,7 @@ function animate() {
     // Player
     player.velocity.x = 0
 
-    if (!player.isAttacking) {
+    if (!player.isAttacking && player.movement) {
         if(keys.a.pressed && player.lastKey === 'a') {
             player.velocity.x = -5
             if (player.direction != 'left'){
@@ -280,7 +280,7 @@ function animate() {
     // Enemy
     enemy.velocity.x = 0
 
-    if (!enemy.isAttacking) {
+    if (!enemy.isAttacking && enemy.movement) {
         if(keys.ArrowRight.pressed && enemy.lastKey === 'ArrowRight') {
             enemy.velocity.x = 5
                 if (enemy.direction != 'right'){
@@ -310,7 +310,23 @@ function animate() {
     if (collision({
         r1: player,
         r2: enemy
-        }) && player.isAttacking){
+        }) && player.isAttacking && player.canAttack){
+        player.movement = false
+        player.canAttack = false 
+        enemy.movement = false
+        enemy.canAttack = false
+        setTimeout(() => {
+            player.movement = true
+        }, 500)
+        setTimeout(() => {
+            enemy.movement = true
+        }, 350)
+        setTimeout(() => {
+            player.canAttack = true
+        }, 750)
+        setTimeout(() => {
+            enemy.canAttack = true
+        }, 750)
         player.isAttacking = false
         enemy.health -= 10
         enemy.changeSprite('hit')
@@ -321,7 +337,23 @@ function animate() {
     if (collision({
         r1: enemy,
         r2: player
-        }) && enemy.isAttacking){ 
+        }) && enemy.isAttacking && enemy.canAttack){
+        enemy.movement = false
+        enemy.canAttack = false
+        player.movement = false
+        player.canAttack = false 
+        setTimeout(() => {
+            enemy.movement = true
+        }, 500)
+        setTimeout(() => {
+            player.movement = true
+        }, 350)
+        setTimeout(() => {
+            enemy.canAttack = true
+        }, 750)
+        setTimeout(() => {
+            player.canAttack = true
+        }, 750)
         enemy.isAttacking = false
         player.health -= 10
         player.changeSprite('hit')

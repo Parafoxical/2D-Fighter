@@ -58,6 +58,8 @@ class Fighter extends Sprite{
         this.width = 70
         this.height = 150
         this.lastKey
+        this.movement = true
+        this.canAttack = true
         this.attackBox = {
             position: {
                 x: this.position.x,
@@ -213,9 +215,9 @@ class Fighter extends Sprite{
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
 
-        if (this.position.y + this.height + this.velocity.y >= 452){
+        if (this.position.y + this.height + this.velocity.y >= 530){
             this.velocity.y = 0
-            this.position.y = 302
+            this.position.y = 380
         }else{
             this.velocity.y += gravity
         }
