@@ -76,15 +76,48 @@ class Fighter extends Sprite{
         this.framesHold = 5
         this.sprites = sprites
         this.direction = direction
+        this.isAlive = true
+        this.isJumping = false
 
         for (const sprite in sprites) {
-            sprites[sprite].image = new Image()
+            sprites[sprite].image = new Image() 
             sprites[sprite].image.src = sprites[sprite].imageSrc
+        }
+    }
+
+    attack() {
+        this.changeSprite('attack')
+        this.isAttacking = true
+        setTimeout(() => {
+            this.isAttacking = false
+        }, 500)
+    }
+
+    takehit() {
+        this.health -= 20
+        if (this.health <= 0) {
+            this.changeSprite('death')
+        } else {
+            this.changeSprite('hit')
+        }
+    } 
+
+    jump() {
+        if (!this.isJumping && !this.isAttacking) {
+            this.isJumping = true
+            this.velocity.y = -20
         }
     }
 
     changeSprite(sprite){
         if (this.direction === 'left') {
+            if (this.image === this.sprites.death.image){
+                if (this.framesCurrent === this.sprites.death.framesMax - 1){
+                    this.isAlive = false
+                }
+                return
+            }
+
             if (this.image === this.sprites.attackleft.image && this.framesCurrent < this.sprites.attackleft.framesMax - 1) {
                 return
             }
@@ -141,10 +174,25 @@ class Fighter extends Sprite{
                         this.framesCurrent = 0 
                     }                  
                 break
+                case 'death':
+                    if (this.image !== this.sprites.death.image) {
+                        this.framesHold = this.sprites.death.framesHold
+                        this.image = this.sprites.death.image
+                        this.framesMax = this.sprites.death.framesMax
+                        this.framesCurrent = 0 
+                    }                  
+                break
             }
         }
 
         if (this.direction === 'right') {
+            if (this.image === this.sprites.death.image){
+                if (this.framesCurrent === this.sprites.death.framesMax - 1){
+                    this.isAlive = false
+                }
+                return
+            }
+
             if (this.image === this.sprites.attackright.image && this.framesCurrent < this.sprites.attackright.framesMax - 1) {
                 return
             }
@@ -159,7 +207,6 @@ class Fighter extends Sprite{
                         this.image = this.sprites.idleright.image
                         this.framesMax = this.sprites.idleright.framesMax
                         this.framesCurrent = 0
-                        console.log('abc')
                     }                
                     break
                 case 'run':
@@ -202,6 +249,14 @@ class Fighter extends Sprite{
                             this.framesCurrent = 0 
                         }                  
                     break
+                    case 'death':
+                        if (this.image !== this.sprites.death.image) {
+                            this.framesHold = this.sprites.death.framesHold
+                            this.image = this.sprites.death.image
+                            this.framesMax = this.sprites.death.framesMax
+                            this.framesCurrent = 0 
+                        }                  
+                    break
             }
         }
         
@@ -209,12 +264,15 @@ class Fighter extends Sprite{
 
     update(){
         this.draw()
-        this.animateFrames()
+        if (this.isAlive){
+            this.animateFrames()
+        }
         
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
 
         if (this.position.y + this.height + this.velocity.y >= 530){
+            this.isJumping = false
             this.velocity.y = 0
             this.position.y = 380
         }else{
@@ -228,13 +286,5 @@ class Fighter extends Sprite{
             this.attackBox.position.x = this.position.x + this.hitboxOffset.x
             this.attackBox.position.y = this.position.y + this.hitboxOffset.y
         }
-    }    
-    
-    attack(){
-        this.changeSprite('attack')
-        this.isAttacking = true
-        setTimeout(() => {
-            this.isAttacking = false
-        }, 500)
     }
 }
